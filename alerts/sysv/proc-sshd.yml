@@ -1,0 +1,14 @@
+# 2019-02-10 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: proc-sshd
+    rules:
+      - alert: proc-sshd
+        expr: >-
+          namedprocess_namegroup_num_procs{
+            groupname="sshd"}
+          == 0
+        annotations:
+          title: >-
+            process {{ $labels.groupname }} down on {{ $labels.instance }}
