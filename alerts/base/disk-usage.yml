@@ -4,6 +4,11 @@
 groups:
   - name: disk-usage
     rules:
+      - alert: disk-usage-absent
+        expr: absent(node_filesystem_free_bytes)
+        annotations:
+          title: node_filesystem_free_bytes absent in {{ $labels.job }}
+
       - alert: disk-usage
         expr: >-
           (node_filesystem_free_bytes * 100
@@ -11,5 +16,5 @@ groups:
           < 30
         annotations:
           title: >-
-            disk {{ $labels.mountpoint }} < {{ $value }} free
-            on {{ $labels.instance }}
+            disk {{ $labels.mountpoint }} < {{ $value }}
+            free space on {{ $labels.instance }}

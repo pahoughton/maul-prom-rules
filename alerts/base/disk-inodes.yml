@@ -1,0 +1,20 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: disk-inodes
+    rules:
+      - alert: disk-inodes-absent
+        expr: absent(node_filesystem_files_free)
+        annotations:
+          title: node_filesystem_files_free absent in {{ $labels.job }}
+
+      - alert: disk-inodes
+        expr: >-
+          (node_filesystem_files_free * 100
+          / node_filesystem_files)
+          < 30
+        annotations:
+          title: >-
+            disk {{ $labels.mountpoint }} < {{ $value }}
+            free inodes on {{ $labels.instance }}

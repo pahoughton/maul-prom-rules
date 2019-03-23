@@ -1,0 +1,17 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: disk-fs-error
+    rules:
+      - alert: disk-fs-error-absent
+        expr: absent(node_filesystem_device_error)
+        annotations:
+          title: node_filesystem_files_free absent in {{ $labels.job }}
+
+      - alert: disk-fs-error
+        expr: node_filesystem_device_error > 0
+        annotations:
+          title: >-
+            disk {{ $labels.mountpoint }} has {{ $value }}
+            errors on {{ $labels.instance }}

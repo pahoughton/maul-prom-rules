@@ -1,0 +1,17 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: mock_counter
+    rules:
+      - alert: mock-counter-absent
+        expr: absent(mock_counter)
+        annotations:
+          title: mock_counter empty
+
+      - alert: mock-counter-increase
+        expr: increase(mock_counter)
+        annotations:
+          title: >-
+            mock count increased by {{ $value }}
+            on {{ $labels.instance }}

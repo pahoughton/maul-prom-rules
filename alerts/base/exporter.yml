@@ -4,6 +4,11 @@
 groups:
   - name: exporter
     rules:
+      - alert: exporter-absent
+        expr: absent(up)
+        annotations:
+          title: exporter absent
+
       - alert: exporter
         expr: up == 0
         annotations:

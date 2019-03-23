@@ -1,0 +1,19 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: mem-free
+    rules:
+      - alert: mem-free-absent
+        expr: absent(node_memory_MemFree_bytes)
+        annotations:
+          title: node_memory_MemFree_bytes absent in {{ $labels.job }}
+
+      - alert: mem-free
+        expr: >-
+          (node_memory_MemFree_bytes * 100
+          / node_memory_MemTotal_bytes)
+          < 30
+        annotations:
+          title: >-
+            memory free {{ $value }}% < 30% on {{ $labels.instance }}

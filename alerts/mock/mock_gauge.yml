@@ -1,0 +1,15 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: mock_guage
+    rules:
+      - alert: mock-guage-absent
+        expr: absent(mock_guage)
+        annotations:
+          title: mock_guage empty
+
+      - alert: mock-guage-max
+        expr: mock_guage > 80
+        annotations:
+          title: mock guage is {{ $value }} on {{ $labels.instance }}

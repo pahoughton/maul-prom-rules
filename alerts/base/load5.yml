@@ -1,0 +1,16 @@
+# 2019-03-23 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: load5
+    rules:
+      - alert: load5-absent
+        expr: absent(node_load5)
+        annotations:
+          title: node_load5 absent in {{ $labels.job }}
+
+      - alert: load5
+        expr: node_load5 > 6
+        annotations:
+          title: >-
+            load5 {{ $value }} > 6 on {{ $labels.instance }}
