@@ -2,15 +2,48 @@
 #
 ---
 groups:
-  - name: mem-free
-    rules:
-      - alert: mem-free
-        expr: >-
-          ( node_memory_MemFree_bytes
-          + node_memory_Buffers_bytes
-          + node_memory_Cached_bytes)
-          / node_memory_MemTotal_bytes
-          < .3
-        annotations:
-          title: >-
-            memory free {{ $value }}% < 30% on {{ $labels.instance }}
+- name: mem-free
+  rules:
+  - record: fed:node_memory_Active_bytes
+    expr: avg_over_time(node_memory_Active_bytes[1h])
+  - record: fed:node_memory_Active_file_bytes
+    expr: avg_over_time(node_memory_Active_file_bytes[1h])
+  - record: fed:node_memory_Buffers_bytes
+    expr: max_over_time(node_memory_Buffers_bytes[1h])
+  - record: fed:node_memory_Cached_bytes
+    expr: max_over_time(node_memory_Cached_bytes[1h])
+  - record: fed:node_memory_CmaFree_bytes
+    expr: avg_over_time(node_memory_CmaFree_bytes[1h])
+  - record: fed:node_memory_Dirty_bytes
+    expr: avg_over_time(node_memory_Dirty_bytes[1h])
+  - record: fed:node_memory_Mapped_bytes
+    expr: max_over_time(node_memory_Mapped_bytes[1h])
+  - record: fed:node_memory_MemAvailable_bytes
+    expr: max_over_time(node_memory_MemAvailable_bytes[1h])
+  - record: fed:node_memory_MemFree_bytes
+    expr: min_over_time(node_memory_MemFree_bytes[1h])
+  - record: fed:node_memory_MemTotal_bytes
+    expr: min_over_time(node_memory_MemTotal_bytes[1h])
+  - record: fed:node_memory_SwapCached_bytes
+    expr: max_over_time(node_memory_SwapCached_bytes[1h])
+  - record: fed:node_memory_SwapFree_bytes
+    expr: max_over_time(node_memory_SwapFree_bytes[1h])
+  - record: fed:node_memory_SwapTotal_bytes
+    expr: max_over_time(node_memory_SwapTotal_bytes[1h])
+  - alert: mem-free
+    expr: >-
+      ( node_memory_MemFree_bytes
+      + node_memory_Buffers_bytes
+      + node_memory_Cached_bytes)
+      / node_memory_MemTotal_bytes
+      < .2
+
+  - alert: mem-free-maul
+    expr: >-
+      ( node_memory_MemFree_bytes
+      + node_memory_Buffers_bytes
+      + node_memory_Cached_bytes)
+      / node_memory_MemTotal_bytes
+      < .3
+    labels:
+      notify_group: cca/maul

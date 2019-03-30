@@ -2,19 +2,22 @@
 #
 ---
 groups:
-  - name: disk-inodes
-    rules:
-      - alert: disk-inodes-absent
-        expr: absent(node_filesystem_files_free)
-        annotations:
-          title: node_filesystem_files_free absent in {{ $labels.job }}
+- name: disk-inodes
+  rules:
+  - record: fed:node_filesystem_files_free
+    expr: max_over_time(node_filesystem_files_free[1h])
+  - record: fed:node_filesystem_files
+    expr: max_over_time(node_filesystem_files[1h])
+  - alert: disk-inodes
+    expr: >-
+      node_filesystem_files_free
+      / node_filesystem_files
+      < .2
 
-      - alert: disk-inodes
-        expr: >-
-          (node_filesystem_files_free * 100
-          / node_filesystem_files)
-          < 30
-        annotations:
-          title: >-
-            disk {{ $labels.mountpoint }} < {{ $value }}
-            free inodes on {{ $labels.instance }}
+  - alert: disk-inodes-maul
+    expr: >-
+      node_filesystem_files_free{device=~".*vg_maul.*"}
+      / node_filesystem_filess{device=~".*vg_maul.*"}
+      < .3
+    labels:
+      notify_group: cca/maul

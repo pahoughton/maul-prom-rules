@@ -5,17 +5,19 @@ groups:
 - name: disk-usage
   rules:
   - record: fed:node_filesystem_free_bytes
-    expr: min(node_filesystem_free_bytes[1h])
+    expr: min_over_time(node_filesystem_free_bytes[1h])
   - record: fed:node_filesystem_size_bytes
-    expr: min(node_filesystem_size_bytes[1h])
-  - record: node_filesystem_free_bytes_min
-    expr: 0.1
+    expr: min_over_time(node_filesystem_size_bytes[1h])
   - alert: disk-usage
     expr: >-
       node_filesystem_free_bytes
       / node_filesystem_size_bytes
-      < node_filesystem_free_bytes_min
-    annotations:
-      title: disk space low on {{ $labels.mountpoint }}
+      < .1
+
+  - alert: disk-usage-maul
+    expr: >-
+      node_filesystem_free_bytes{device=~".*vg_maul.*"}
+      / node_filesystem_size_bytes{device=~".*vg_maul.*"}
+      < .3
     labels:
-      notify_group: maul/alerts
+      notify_group: cca/maul

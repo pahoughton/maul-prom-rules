@@ -2,9 +2,9 @@
 #
 ---
 groups:
-  - name: service
-    rules:
-      - alert: service
-        expr: node_systemd_unit_state{state="failed"} > 0
-        annotations:
-          title: service {{ $labels.name }} failed on {{ $labels.instance }}
+- name: service
+  rules:
+  - record: fed:node_systemd_unit_state
+    expr: max_over_time(node_systemd_unit_state[1h])
+  - alert: service
+    expr: node_systemd_unit_state{state="failed"} > 0

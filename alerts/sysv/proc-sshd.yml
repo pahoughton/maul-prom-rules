@@ -2,13 +2,11 @@
 #
 ---
 groups:
-  - name: proc-sshd
-    rules:
-      - alert: proc-sshd
-        expr: >-
-          namedprocess_namegroup_num_procs{
-            groupname="sshd"}
-          == 0
-        annotations:
-          title: >-
-            process {{ $labels.groupname }} down on {{ $labels.instance }}
+- name: proc-sshd
+  rules:
+  - record: fed:namedprocess_namegroup_num_procs
+    expr: min_over_time(namedprocess_namegroup_num_procs[1h])
+  - alert: proc-sshd
+    expr: >-
+      namedprocess_namegroup_num_procs{groupname="sshd"}
+      == 0

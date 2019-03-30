@@ -2,15 +2,19 @@
 #
 ---
 groups:
-  - name: load5
-    rules:
-      - alert: load5-absent
-        expr: absent(node_load5)
-        annotations:
-          title: node_load5 absent in {{ $labels.job }}
+- name: load5
+  rules:
+  - record: fed:node_load1
+    expr: avg_over_time(node_load1[1h])
+  - record: fed:node_load5
+    expr: avg_over_time(node_load5[1h])
+  - record: fed:node_load15
+    expr: avg_over_time(node_load15[1h])
 
-      - alert: load5
-        expr: node_load5 > 6
-        annotations:
-          title: >-
-            load5 {{ $value }} > 6 on {{ $labels.instance }}
+  - alert: load5
+    expr: node_load5 > 6
+
+  - alert: load5-maul
+    expr: node_load5 > 5.5
+    labels:
+      notify_group: cca/maul

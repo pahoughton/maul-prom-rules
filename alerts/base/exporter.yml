@@ -2,14 +2,9 @@
 #
 ---
 groups:
-  - name: exporter
-    rules:
-      - alert: exporter-absent
-        expr: absent(up)
-        annotations:
-          title: exporter absent
-
-      - alert: exporter
-        expr: up == 0
-        annotations:
-          title: exporter {{ $labels.job }} down on {{ $labels.instance }}
+- name: exporter
+  rules:
+  - record: fed:up
+    expr: min_over_time(up[1h])
+  - alert: exporter
+    expr: up == 0
