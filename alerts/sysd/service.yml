@@ -1,0 +1,10 @@
+# 2019-03-24 (cc) <paul4hough@gmail.com>
+#
+---
+groups:
+  - name: service
+    rules:
+      - alert: service
+        expr: node_systemd_unit_state{state="failed"} > 0
+        annotations:
+          title: service {{ $labels.name }} failed on {{ $labels.instance }}
